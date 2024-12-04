@@ -89,3 +89,5 @@ input addr exceed dram scope
 Android's image name: v851se-perf1
 [02.999]Starting kernel ...
 ```
+
+![PCB](pcb.jpg)
