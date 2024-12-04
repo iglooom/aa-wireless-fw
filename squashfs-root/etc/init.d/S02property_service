@@ -1,0 +1,25 @@
+#!/bin/sh
+
+case "$1" in
+	start)
+		if [ ! -d /data/property ]; then
+			mkdir -p /data/property
+		fi
+
+		ulimit -c 0
+
+		property_service &
+
+		;;
+	stop)
+		;;
+	restart|reload)
+		$0 stop
+		$0 start
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+esac
+
+exit 0

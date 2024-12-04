@@ -1,0 +1,78 @@
+#!/bin/sh
+#
+# Start carplay....
+#
+
+start() {
+	mkdir -p /dev/socket
+	#export LD_LIBRARY_PATH=/rom/mnt/UDISK/lib:${LD_LIBRARY_PATH}
+	mdnsd
+
+	#sdDongle&
+	#cat /sys/devices/platform/soc/usbc0/usb_host
+	MtpDaemon &
+	echo 0 > /proc/sys/kernel/printk
+	let log_size=`du -s /mnt/UDISK/log | awk '{print $1}'`
+	if [ "$log_size" -gt 10240 ];then
+		echo "log file is $log_size, need delete it"
+		rm -rf /mnt/UDISK/log/*
+	fi
+	
+	if [ ! -d /mnt/UDISK/log ]; then
+		mkdir -p /mnt/UDISK/log
+	fi
+
+	log_index=`getprop persist.console.log.index`
+	log_nosave=`getprop persist.console.log.nosave`
+
+	if [ "$log_index" = "" ];then
+		log_index=0
+	fi
+
+	rm /mnt/UDISK/log/log_index*
+
+	if [ "$log_nosave" = "1" ];then
+		sdDongle&
+	else
+		sdDongle &> /mnt/UDISK/log/sdDongle_"$log_index".log &
+		cat /proc/kmsg > /mnt/UDISK/log/kernel_"$log_index".log &
+		touch /mnt/UDISK/log/log_index_"$log_index"
+		let num_index=$log_index
+		let num_index++
+		let num_index%=5
+
+		echo "num_index=$num_index"
+
+		setprop persist.console.log.index "$num_index"
+	fi
+	cat /sys/devices/platform/soc/usbc0/usb_host
+
+	while true
+	do
+		sleep 5
+		sync
+	done &
+}
+
+stop() {
+	printf "Stopping carplay: "
+	killall sdDongle
+}
+
+case "$1" in
+    start)
+	start
+	;;
+    stop)
+	stop
+	;;
+    restart|reload)
+	stop
+	start
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?

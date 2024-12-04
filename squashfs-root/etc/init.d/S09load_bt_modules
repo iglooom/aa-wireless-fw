@@ -1,0 +1,28 @@
+#!/bin/sh
+
+case "$1" in
+	start)
+		bt_name=`getprop persist.bt.vendor.name`
+		if [ "$bt_name" = "" ];then
+			setprop persist.bt.vendor.name "smartBox-"
+			setprop persist.product.name "smartBox"
+		fi
+		
+		/usr/bin/sdsdk &
+
+		;;
+	stop)
+
+		
+
+		;;
+	restart|reload)
+		$0 stop
+		$0 start
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+esac
+
+exit 0

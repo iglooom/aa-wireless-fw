@@ -1,0 +1,7 @@
+videobuf2-core
+videobuf2-dma-contig
+videobuf2-memops
+videobuf2-v4l2
+vin_io
+gc2053_mipi
+vin_v4l2

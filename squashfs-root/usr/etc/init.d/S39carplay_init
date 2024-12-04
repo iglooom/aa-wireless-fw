@@ -1,0 +1,5 @@
+mkdir -p /dev/socket
+mdnsd
+sleep 0.2
+/etc/start_apple_dev.sh
+sdDongle&

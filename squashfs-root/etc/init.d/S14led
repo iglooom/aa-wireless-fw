@@ -1,0 +1,30 @@
+#!/bin/sh
+
+case "$1" in
+	start)
+		echo 1 > /sys/class/gpio/export
+		echo out > /sys/class/gpio/gpio1/direction
+		
+		echo 2 > /sys/class/gpio/export
+		echo out > /sys/class/gpio/gpio2/direction
+		
+		echo 3 > /sys/class/gpio/export
+		echo out > /sys/class/gpio/gpio3/direction
+
+		echo 136 > /sys/class/gpio/export
+		echo out > /sys/class/gpio/gpio136/direction
+		
+		;;
+	stop)
+		
+		;;
+	restart|reload)
+		$0 stop
+		$0 start
+		;;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+esac
+
+exit 0
